@@ -60,20 +60,32 @@ public class main {
 			
 			i=0;
 			while (i<n){
+				List<Boolean> l=new ArrayList<Boolean>();
 			if((line=reader.readLine())!=null){
-				int s=line.indexOf(" ");
-				functions[i]=Integer.parseInt(line.substring(0, s));
+				int s=-1;
+				while((s+1)<line.length()){
+					int s1=line.substring(s+1).indexOf(" ");
+					s1=s1+s+1;
+					l.add((Integer.parseInt(line.substring(s+1, s1))==1));
+					s=s1;
+					
+				}
 			}
 			i++;
+			truth.add(l);
+			}
+			System.out.println();
+			for( i=0;i<n;i++){
+				System.out.println();
+				for(int j=0;j<truth.get(i).size();j++){
+					if(truth.get(i).get(j))
+					System.out.print("1"+" ");
+					else
+						System.out.print("0"+" ");
+				}
 			}
 			
-			int[][][] res=new int[8][3][3];
-			
-			res=construct(values,functions);
-			
-			int x=8;
-			x=x+2;
-			
+			construct(values);
 			
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -130,24 +142,15 @@ public class main {
 		return res;
 	}
 	
-	static int[][][] construct(int[] values, int[] functions){
+	static void construct(int[] values){
 		int d=(int) Math.pow(2, n);
-		String[] table=new String[n];
+		String[] table=new String[d];
 		
-		for(int i=0;i<n;i++){
+		for(int i=0;i<d;i++){
 			table[i]="";
 		}
 		
 		int l=values.length;
-		int[][][] res=new int [d][l][l];
-	
-		for(int i=0;i<d;i++){
-			for(int j=0;j<n;j++){
-				for(int k=0;k<n;k++){
-					res[i][j][k]=-1;
-				}
-			}
-		}
 		
 		for(int i=0;i<d;i++){
 			int[] curr=new int[l];
@@ -159,56 +162,50 @@ public class main {
 				}
 				
 				curr[j]=(int) Math.floor((i-sum)/((int) Math.pow(2, l-j-1)));
+				table[i]=table[i]+curr[j];
 			}
-				
+			
+			table[i]=table[i]+":";
+			
 			for(int j=0;j<n;j++){
-				int nn=list.get(j).size();
-				int[] args=new int[nn];
 				
-				for(int k=0;k<nn;k++){
-					args[k]=curr[list.get(j).get(k)-1];
+				int neighbours_number=list.get(j).size();
+				List<Integer> neighbours=list.get(j);
+				int[] neighbour_values=new int[neighbours_number];
+				
+				int n_val=0;
+				
+				for(int k=0;k<neighbours_number;k++){
+					int x=0;
+					n_val=n_val+curr[neighbours.get(k)-1]*((int) Math.pow(2, k));
 				}
 				
-				table[j]=table[j]+fnc(args, functions[j]-1)+" ";
+				int out=0;
+				if (truth.get(j).get(n_val))
+				out=1;
 				
-				
-			}
-			/*
-			for(int j=0;j<l;j++){
-				int[] r=new int[l];
-				r=fnc(curr,j);
-				
-				res[i][j]=r;
-				
-			}
-			
-			String cr="";
-			
-			for(int j=0;j<l;j++){
-				cr=cr+curr[j];
-			}
-			
-			System.out.print(cr+": ");
-			
-			for(int j=0;j<l;j++){
-				String tmp="";
-				for(int k=0;k<l;k++){
-					tmp=tmp+res[i][j][k];
+				if (out!=curr[j]){
+					for(int k=0;k<n;k++){
+						if(k!=j){
+							table[i]=table[i]+curr[k];
+						}else{
+							table[i]=table[i]+out;
+						}
+					}
+					table[i]=table[i]+" ";
 				}
-				if(!cr.equals(tmp)){
-					System.out.print(tmp+" ");
-				}
+				
 			}
-			*/
-			System.out.println();
-			
 		}
 		
-		for(int i=0;i<n;i++){
+			System.out.println();
+			
+		
+		
+		for(int i=0;i<d;i++){
 			System.out.println(table[i]);
 		}
 		
-		return res;
 	}
 
 	static void print_graph(int[][] adj,int n){
