@@ -16,8 +16,10 @@ public class main {
 	private static List<List<String>> attractors;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		SinkTest sT=new SinkTest("cycle.txt");
-		Graph graph=new Graph("cycle.txt");
+		List<String> nei=new ArrayList<String>();
+		
+		SinkTest sT=new SinkTest("two.txt");
+		Graph graph=new Graph("two.txt");
 		String s="abc";
 		List<String> test=new ArrayList<String>();
 		

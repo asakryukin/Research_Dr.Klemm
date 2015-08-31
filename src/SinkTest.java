@@ -64,8 +64,8 @@ public class SinkTest {
 			e.printStackTrace();
 		}
 		System.out.println(convertNumberToBinary(6));
-		boolean[] visited=new boolean[8];
-		for(int j=0;j<8;j++){
+		boolean[] visited=new boolean[(int)Math.pow(2, numberOfNodes)];
+		for(int j=0;j<Math.pow(2, numberOfNodes);j++){
 			visited[j]=false;
 		}
 		int[][] adj;
@@ -199,7 +199,7 @@ public class SinkTest {
 		
 		visited[convertBinaryToNumber(node)]=true;
 		int size=(int) Math.pow(2, numberOfNodes);
-		//adj is adjacency matrix 1st dimension to node 2nd dimension from node
+		//adj is adjacency matrix 1st dimension from node 2nd dimension to node
 		
 		
 		List<String> neighbours=findNeighbours(node);
@@ -268,11 +268,11 @@ public class SinkTest {
 				boolean has_anc=false;
 				int[][] adj=dfsTrees.get(i);
 				for(int k=0;k<dfsTrees.get(i).length;k++){
-					if(adj[k][j]==1){
+					if(adj[j][k]==1){
 						end=false;
 						
 					}
-					if(adj[j][k]==1){
+					if(adj[k][j]==1){
 						has_anc=true;
 						
 					}
@@ -324,6 +324,7 @@ public class SinkTest {
 	}
 	List<List<String>> findSinkComponents(){
 		List<List<String>> result=new ArrayList<List<String>>();
+		/*
 		List<List<String>> temp=detectSinkLeaves();
 		
 		if(!temp.isEmpty()){
@@ -344,7 +345,8 @@ public class SinkTest {
 			}
 			result.add(t);
 		}
-		
+		*/
+		result=detectSinkComponents();
 		return result;
 		
 	}
@@ -365,7 +367,73 @@ public class SinkTest {
 	}
 	
 	List<List<String>> detectSinkComponents(){
+		List<List<String>> result=new ArrayList<List<String>>();
+		List<String> endPoints=new ArrayList<String>();
 		
+		for(int i=0;i<dfsTrees.size();i++){
+			endPoints=findEndPoint(dfsTrees.get(i),startPoints.get(i));
+			for(int j=endPoints.size()-1;j>=0;j--){
+				List<String> branch=new ArrayList<String>();
+				List<String> res=new ArrayList<String>();
+				List<String> pointers=new ArrayList<String>();
+				branch.add(endPoints.get(j));
+				
+				res=buildUpSinkComponent(branch, pointers, dfsTrees.get(i));
+				if(res!=null){
+					result.add(res);
+				}
+				else{
+					List<String> temp=new ArrayList<String>();
+					temp.add(convertNumberToBinary(startPoints.get(i)));
+					int[][] adj=dfsTrees.get(i);
+					for(int k=0;k<adj.length;k++){
+						int sum=0;
+						for(int ind=0;ind<adj.length;ind++){
+							sum+=adj[ind][k];
+						}
+						if(sum>0){
+							temp.add(convertNumberToBinary(k));
+						}
+					}
+					boolean changed=true;
+					//bad implementation
+					while(changed){
+						changed=false;
+						for(int k=0;k<temp.size();k++){
+							List<String> nei=findNeighbours(temp.get(k));
+							for(int ind=0;ind<nei.size();ind++){
+								if(!temp.contains(nei.get(ind))){
+									temp.add(nei.get(ind));
+									changed=true;
+								}
+							}
+						}
+					}
+					
+					result.add(temp);
+				}
+			}
+			
+		}
+		
+		int i=0;
+		int n=result.size();
+		
+		while(i<n){
+			
+			for(int j=0;j<result.size();j++){
+				if(result.get(i).containsAll(result.get(j))&&i!=j){
+					result.remove(i);
+					i--;
+					break;
+				}
+			}
+			
+			i++;
+			n=result.size();
+		}
+		return result;
+		/*
 		List<List<String>> result=new ArrayList<List<String>>();
 		List<List<String>> temp=new ArrayList<List<String>>();
 		List<String> endPoints=new ArrayList<String>();
@@ -444,11 +512,61 @@ public class SinkTest {
 		
 		
 		return result;
-		
+		*/
 		
 	}
 	
-	List<String> findEndPoint(int[][] adj){
+	List<String> buildUpSinkComponent(List<String> branch, List<String> pointers, int[][] adj){
+		/*
+		if (pointers.isEmpty()){
+			return branch;
+		}
+		*/
+		//Adding neighbours of the highest node as pointers
+		List<String> nei=findNeighbours(branch.get(branch.size()-1));
+		
+		for(int i=0;i<nei.size();i++){
+			if(!pointers.contains(nei.get(i))){
+				pointers.add(nei.get(i));
+			}
+		}
+		
+		
+		//Checking for pointers which already in the branch and removing them
+		for(int i=pointers.size()-1;i>=0;i--){
+			if(branch.contains(pointers.get(i))){
+				pointers.remove(i);
+			}
+		}
+		//If no pointers left - search is finished
+		if(pointers.isEmpty()){
+			return branch;
+		}else{
+			//else adding ancestors to the branch and repeat 
+			boolean hasAncestor=false;
+			for(int i=0;i<adj.length;i++){
+			if(adj[i][convertBinaryToNumber(branch.get(branch.size()-1))]!=0){
+				if(branch.contains(convertNumberToBinary(i))){
+					
+				}else{
+					branch.add(convertNumberToBinary(i));
+					
+					buildUpSinkComponent(branch, pointers, adj);
+				}
+			}
+				
+			}
+		}
+		
+		//if pointers are empty return branch else the tree has cross edge to another tree
+		if(pointers.isEmpty()){
+			return branch;
+		}else{
+		return null;
+		}
+	}
+	
+	List<String> findEndPoint(int[][] adj,int starting){
 		List<String> result=new ArrayList<String>();
 		for(int i=0;i<adj.length;i++){
 			int sumc=0;
@@ -457,9 +575,12 @@ public class SinkTest {
 				sumc+=adj[j][i];
 				sumr+=adj[i][j];
 			}
-			if(sumc==0 && sumr!=0){
+			if(sumc!=0 && sumr==0){
 				result.add(convertNumberToBinary(i));
 			}
+		}
+		if(result.isEmpty()){
+			result.add(convertNumberToBinary(starting));
 		}
 		return result;
 	}
@@ -484,7 +605,7 @@ public class SinkTest {
 		return result;
 		
 	}
-	
+	//check adj 
 	List<String> returnBranch(String node,int[][] adj){
 		List<String> result=new ArrayList<String>();
 		result.add(node);
