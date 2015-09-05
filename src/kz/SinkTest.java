@@ -1,3 +1,5 @@
+package kz;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,6 +17,8 @@ public class SinkTest {
 	private List<List<String>> sink;
 	private List<int[][]> dfsTrees=new ArrayList<int[][]>();
 	private List<Integer> startPoints=new ArrayList<Integer>();
+	private List<List<String>> attractors=new ArrayList<List<String>>();
+	private int size;
 	public SinkTest(String filename) {
 		// TODO Auto-generated constructor stub
 		Path path=Paths.get(filename);
@@ -63,13 +67,13 @@ public class SinkTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(convertNumberToBinary(6));
+		
 		boolean[] visited=new boolean[(int)Math.pow(2, numberOfNodes)];
 		for(int j=0;j<Math.pow(2, numberOfNodes);j++){
 			visited[j]=false;
 		}
 		int[][] adj;
-		int size=(int) Math.pow(2, numberOfNodes);
+		size=(int) Math.pow(2, numberOfNodes);
 		while(!ifMarked(visited)){
 			int startNode=0;
 			for(int i=0;i<visited.length;i++){
@@ -78,8 +82,13 @@ public class SinkTest {
 					break;
 				}
 			}
-			
-			
+			/*
+			Random r=new Random();
+			startNode=r.nextInt(size);
+			while(visited[startNode]){
+				startNode=r.nextInt(size);
+			}
+			*/
 				adj=new int[size][size];
 				for(int i=0;i<size;i++){
 					for(int j=0;j<size;j++)
@@ -90,40 +99,8 @@ public class SinkTest {
 			dfsTrees.add(constructDFS(convertNumberToBinary(startNode), visited,adj));
 			
 		}
-		/*
-		dfsTrees=new ArrayList<int[][]>();
-		startPoints=new ArrayList<Integer>();
-		
-		int[][] ax=
-			{
-				{0,0,0,0},
-				{0,0,0,0},
-				{0,0,0,0},
-				{0,0,0,0}
-			};
-		int[][] bx=
-			{
-				{0,0,0,0},
-				{0,0,0,0},
-				{0,0,0,0},
-				{0,0,0,0}
-			};
-		int[][] cx=
-			{
-				{0,0,0,0},
-				{0,0,0,0},
-				{0,0,0,0},
-				{0,0,1,0}
-			};
-		
-		dfsTrees.add(ax);
-		dfsTrees.add(bx);
-		dfsTrees.add(cx);
-		
-		startPoints.add(0);
-		startPoints.add(1);
-		startPoints.add(2);
-		*/
+		List<String> x=new ArrayList<String>();
+		//x=findNeighbours("0101110");
 		treeCon();
 		List<List<String>> result=new ArrayList<List<String>>();
 		result=findSinkComponents();
@@ -139,9 +116,14 @@ public class SinkTest {
 				}
 				System.out.println();
 			}
+			attractors=result;
 		}
 		
 		
+	}
+	
+	List<List<String>> getAttractors(){
+		return attractors;
 	}
 	
 	static boolean ifMarked(boolean[] s){
@@ -203,10 +185,10 @@ public class SinkTest {
 		
 		
 		List<String> neighbours=findNeighbours(node);
-		
+		neighbours.sort(new AttractorElementComparator());
 		for(int i=0;i<neighbours.size();i++){
 			if(visited[convertBinaryToNumber(neighbours.get(i))]==false){
-				System.out.println(neighbours.get(i));
+				//System.out.println(neighbours.get(i));
 				adj[convertBinaryToNumber(node)][convertBinaryToNumber(neighbours.get(i))]=1;
 				constructDFS(neighbours.get(i), visited,adj);
 			}
@@ -324,28 +306,6 @@ public class SinkTest {
 	}
 	List<List<String>> findSinkComponents(){
 		List<List<String>> result=new ArrayList<List<String>>();
-		/*
-		List<List<String>> temp=detectSinkLeaves();
-		
-		if(!temp.isEmpty()){
-			result.addAll(temp);
-		}
-		
-		List<List<String>> r=detectSinkComponents();
-		if(r!=null){
-			if(r.size()>0){
-				result.addAll(r);
-			}
-		}
-		
-		if(result.isEmpty()){
-			List<String> t=new ArrayList<String>();
-			for(int i=0; i<Math.pow(2, numberOfNodes);i++){
-				t.add(convertNumberToBinary(i));
-			}
-			result.add(t);
-		}
-		*/
 		result=detectSinkComponents();
 		return result;
 		
@@ -433,98 +393,15 @@ public class SinkTest {
 			n=result.size();
 		}
 		return result;
-		/*
-		List<List<String>> result=new ArrayList<List<String>>();
-		List<List<String>> temp=new ArrayList<List<String>>();
-		List<String> endPoints=new ArrayList<String>();
-				
-		for(int i=0;i<dfsTrees.size();i++){
-			endPoints=findEndPoint(dfsTrees.get(i));
-			temp=returnBranches(endPoints, dfsTrees.get(i));
-			
-			int j=0;
-			int n=temp.size();
-			while(j<n){
-				boolean deeper=false;
-				List<String> nei=findNeighbours(temp.get(j).get(temp.get(j).size()-1));
-				for(int k=0;k<nei.size();k++){
-					if(!temp.get(j).contains(nei.get(k))){
-						deeper=true;
-						break;
-					}
-				}
-				if(!deeper){
-					result.add(temp.get(j));
-					temp.remove(j);
-					j--;
-				}
-				j++;
-				n=temp.size();
-			}
-			
-			if(temp.size()>0){
-				j=0;
-				n=temp.size();
-				while(j<n)
-				{
-					
-					List<String> nn=findNeighbours(temp.get(j).get(temp.get(j).size()-1));
-					int sum=0;
-					for(int k=0;k<temp.size();k++){
-						if(temp.get(k).contains(temp.get(j).get(temp.get(j).size()-1))){
-							sum++;
-						}
-					}
-					
-					if(sum==nn.size()){
-						List<String> temp_res=new ArrayList<String>();
-						temp_res.addAll(temp.get(j));
-						for(int k=j+1;k<temp.size();k++){
-							if(temp.get(k).contains(temp.get(j).get(temp.get(j).size()-1))){
-							temp.get(k).remove(temp.get(k).indexOf(temp.get(j).get(temp.get(j).size()-1)));
-							temp_res.addAll(temp.get(k));
-							}
-						}
-						result.add(temp_res);
-					}
-						int ind=0;
-						int count=temp.size();
-						while(ind<count){
-							
-							if(temp.get(ind).contains(temp.get(j).get(temp.get(j).size()-1))){
-								temp.remove(ind);
-							}
-							
-							ind++;
-							count=temp.size();
-						}
-					
-						
-						
-					
-					
-					j++;
-					n=temp.size();
-				}
-			}
-			
-		}
 		
-		
-		return result;
-		*/
 		
 	}
 	
 	List<String> buildUpSinkComponent(List<String> branch, List<String> pointers, int[][] adj){
 		/*
-		if (pointers.isEmpty()){
-			return branch;
-		}
-		*/
 		//Adding neighbours of the highest node as pointers
 		List<String> nei=findNeighbours(branch.get(branch.size()-1));
-		
+		nei.sort(new AttractorElementComparator());
 		for(int i=0;i<nei.size();i++){
 			if(!pointers.contains(nei.get(i))){
 				pointers.add(nei.get(i));
@@ -543,15 +420,19 @@ public class SinkTest {
 			return branch;
 		}else{
 			//else adding ancestors to the branch and repeat 
+			int node_ind=convertBinaryToNumber(branch.get(branch.size()-1));
 			boolean hasAncestor=false;
 			for(int i=0;i<adj.length;i++){
-			if(adj[i][convertBinaryToNumber(branch.get(branch.size()-1))]!=0){
+			if(adj[i][node_ind]!=0){
 				if(branch.contains(convertNumberToBinary(i))){
 					
 				}else{
 					branch.add(convertNumberToBinary(i));
 					
 					buildUpSinkComponent(branch, pointers, adj);
+					if(pointers.isEmpty()){
+						break;
+					}
 				}
 			}
 				
@@ -563,7 +444,31 @@ public class SinkTest {
 			return branch;
 		}else{
 		return null;
+		}*/
+		String node=branch.get(0);
+		boolean[] v=new boolean[size];
+		int[][] a=new int[size][size];
+		
+		for(int i=0;i<numberOfNodes;i++){
+			v[i]=false;
 		}
+		v[convertBinaryToNumber(node)]=true;
+		for(int i=0;i<size;i++){
+			for(int j=0;j<size;j++){
+				a[i][j]=0;
+			}
+		}
+		
+		int[][] res=constructDFS(node, v, a);
+		
+		List<String> result=new ArrayList<String>();
+		
+		for(int i=0;i<size;i++){
+			if(v[i]){
+				result.add(convertNumberToBinary(i));
+			}
+		}
+		return result;
 	}
 	
 	List<String> findEndPoint(int[][] adj,int starting){

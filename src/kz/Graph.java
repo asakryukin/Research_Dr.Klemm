@@ -1,3 +1,4 @@
+package kz;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -472,6 +473,7 @@ public class Graph {
 				for(int j=0;j<visited.size();j++){
 					if(visited.get(j).equalsIgnoreCase(r)){
 						is_ok=false;
+						break;
 					}
 				}
 				//if not continue dfs
@@ -479,7 +481,7 @@ public class Graph {
 					//checking whether this state is in the fixed points
 					for(int j=0;j<fixed_points.size();j++){
 						if((fixed_points.get(j).equalsIgnoreCase(r))&&(!r.equalsIgnoreCase(current))){
-							fixed_points.remove(current);
+							fixed_points.remove(visited.get(0));
 							return null;
 						}
 					}
