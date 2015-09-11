@@ -1,4 +1,4 @@
-package datasetcreator;
+package cellularAutomata;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -7,21 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class CreateTestingSet {
+import datasetcreator.SimpleNodeComparator;
+
+public class CreateCellularAutomataDataset {
 	
-	private String filename;
 	private int numberOfNodes;
-	private int numberOfInputs;
+	private int rule;
+	private String filename;
 	
-	public CreateTestingSet(String f,int nN, int nI) {
+	public CreateCellularAutomataDataset(int n,int r,String f) {
 		// TODO Auto-generated constructor stub
+		numberOfNodes=n;
+		rule=r;
 		filename=f;
-		numberOfNodes=nN;
-		numberOfInputs=nI;
 	}
 	
 	public void generateFile(){
-		
+
 		try {
 			PrintWriter writer = new PrintWriter(filename, "UTF-8");
 			writer.print(""+numberOfNodes);
@@ -29,14 +31,16 @@ public class CreateTestingSet {
 				writer.println();
 				writer.print(""+(i+1)+" ");
 				List<Integer> in=new ArrayList<Integer>();
-				for(int j=0;j<numberOfInputs;j++){
-					
-					int randomNum;
-					do{
-					 Random rand = new Random();
-					 randomNum = rand.nextInt((numberOfNodes - 1) + 1) + 1;
-					}while(in.contains(randomNum));
-					 in.add(randomNum);
+				if(i==0){
+					in.add(numberOfNodes);
+				}else{
+					in.add(i);
+				}
+				in.add((i+1));
+				if(i==numberOfNodes-1){
+					in.add(1);
+				}else{
+					in.add((i+2));
 				}
 				in.sort(new SimpleNodeComparator());
 				
@@ -45,14 +49,18 @@ public class CreateTestingSet {
 				}
 				
 			}
-			
+			String s="";
+			int t=rule;
+			for(int i=0;i<8;i++){
+				int tt=t%2;
+				t=t/2;
+				s=""+tt+" "+s;
+				
+			}
 			for(int i=0;i<numberOfNodes;i++){
 				writer.println();
-				for(int j=0;j<Math.pow(2, numberOfInputs);j++){
-					Random rand = new Random();
-					 int randomNum = rand.nextInt(2);
-					 writer.print(""+randomNum+" ");
-				}
+				writer.print(""+s);
+				
 			}
 			writer.close();
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {

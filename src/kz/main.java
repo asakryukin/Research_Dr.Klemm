@@ -2,6 +2,7 @@ package kz;
 import java.util.ArrayList;
 import java.util.List;
 
+import cellularAutomata.CreateCellularAutomataDataset;
 import newAlgorithm.NewAlg;
 import datasetcreator.CreateTestingSet;
 
@@ -14,7 +15,8 @@ public class main {
 	private static int trials=0,successfulTrials=0;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
+		CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(9, 254, "cell.txt");
+		CCAD.generateFile();
 		for(int numberOfNodes=3;numberOfNodes<10;numberOfNodes++){
 			for(int numberOfTests=0;numberOfTests<10;numberOfTests++){
 				trials++;
