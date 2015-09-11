@@ -15,18 +15,21 @@ public class main {
 	private static int trials=0,successfulTrials=0;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(9, 254, "cell.txt");
-		CCAD.generateFile();
-		for(int numberOfNodes=3;numberOfNodes<10;numberOfNodes++){
-			for(int numberOfTests=0;numberOfTests<10;numberOfTests++){
+		
+		int numberOfNodes=9;
+		{
 				trials++;
-				CreateTestingSet CT=new CreateTestingSet("dataset.txt", numberOfNodes, 2);
-				CT.generateFile();
+				//CreateTestingSet CT=new CreateTestingSet("dataset.txt", numberOfNodes, 2);
+				//CT.generateFile();
+			while(true){
+				try{
+				CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(numberOfNodes, 254, "cell.txt");
+				CCAD.generateFile();
 				List<String> nei=new ArrayList<String>();
 				
-				SinkTest sT=new SinkTest("dataset.txt");
-				Graph graph=new Graph("dataset.txt");
-				NewAlg nA=new NewAlg("dataset.txt");
+				
+				
+				Graph graph=new Graph("cell.txt");
 				
 				List<String> test=new ArrayList<String>();
 				
@@ -64,27 +67,67 @@ public class main {
 				
 				//Finding attractors
 				System.out.println();
-				
-				attractorsSink=sT.getAttractors();
-				attractorNew=nA.getAttractors();
-				for(int i=0; i<attractorNew.size();i++){
-					System.out.println("Attractor#"+(i+1)+":");
-					for(int j=0;j<attractorNew.get(i).size();j++){
-						System.out.print(attractorNew.get(i).get(j)+"\t");
-						
-					}
+				numberOfNodes++;
+				}catch(StackOverflowError e){
 					System.out.println();
-					System.out.println("Number of states:"+attractorNew.get(i).size());
+					System.out.println(""+numberOfNodes);
+					break;
 				}
-				if(attractors.equals(attractorNew)&&attractors.equals(attractorsSink)){
-					successfulTrials++;
-					System.out.println("EQUAL!");
+				
+			}
+			numberOfNodes=9;
+			while(true){
+				try{
+					CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(numberOfNodes, 254, "cell.txt");
+					CCAD.generateFile();
+					SinkTest sT=new SinkTest("cell.txt");
+					attractorsSink=sT.getAttractors();
+				}catch(StackOverflowError e){
+					System.out.println();
+					System.out.println(""+numberOfNodes);
+					break;
+				}catch(OutOfMemoryError e){
+					System.out.println();
+					System.out.println(""+numberOfNodes);
+					break;
 				}
-		
+				numberOfNodes++;
+			}
+			numberOfNodes=9;
+			while(true){
+				try{
+					CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(numberOfNodes, 254, "cell.txt");
+					CCAD.generateFile();
+					NewAlg nA=new NewAlg("cell.txt");
+					
+					attractorNew=nA.getAttractors();
+					for(int i=0; i<attractorNew.size();i++){
+						System.out.println("Attractor#"+(i+1)+":");
+						for(int j=0;j<attractorNew.get(i).size();j++){
+							System.out.print(attractorNew.get(i).get(j)+"\t");
+							
+						}
+						System.out.println();
+						System.out.println("Number of states:"+attractorNew.get(i).size());
+					}
+					/*
+					if(attractors.equals(attractorNew)&&attractors.equals(attractorsSink)){
+						successfulTrials++;
+						System.out.println("EQUAL!");
+					}*/
+			
+					numberOfNodes++;
+				}catch(StackOverflowError e){
+					System.out.println();
+					System.out.println(""+numberOfNodes);
+					break;
+				}
+				
 			}
 		}
-		System.out.println("Number of tests:"+trials);
-		System.out.println("Successful:"+successfulTrials);
+		//System.out.println("Number of tests:"+trials);
+		//System.out.println("Successful:"+successfulTrials);
+		
 	}
 
 	
