@@ -15,10 +15,10 @@ public class main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		for(int numberOfNodes=4;numberOfNodes<10;numberOfNodes++){
+		for(int numberOfNodes=3;numberOfNodes<10;numberOfNodes++){
 			for(int numberOfTests=0;numberOfTests<10;numberOfTests++){
 				trials++;
-				CreateTestingSet CT=new CreateTestingSet("dataset.txt", numberOfNodes, 3);
+				CreateTestingSet CT=new CreateTestingSet("dataset.txt", numberOfNodes, 2);
 				CT.generateFile();
 				List<String> nei=new ArrayList<String>();
 				
@@ -65,6 +65,15 @@ public class main {
 				
 				attractorsSink=sT.getAttractors();
 				attractorNew=nA.getAttractors();
+				for(int i=0; i<attractorNew.size();i++){
+					System.out.println("Attractor#"+(i+1)+":");
+					for(int j=0;j<attractorNew.get(i).size();j++){
+						System.out.print(attractorNew.get(i).get(j)+"\t");
+						
+					}
+					System.out.println();
+					System.out.println("Number of states:"+attractorNew.get(i).size());
+				}
 				if(attractors.equals(attractorNew)&&attractors.equals(attractorsSink)){
 					successfulTrials++;
 					System.out.println("EQUAL!");
