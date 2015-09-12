@@ -39,6 +39,7 @@ public class main {
 				}*/
 		
 <<<<<<< HEAD
+<<<<<<< HEAD
 				numberOfNodes++;
 			
 			}catch(StackOverflowError e){
@@ -58,6 +59,8 @@ public class main {
 				CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(numberOfNodes, 254, "cell.txt");
 				CCAD.generateFile();
 =======
+=======
+>>>>>>> parent of e057177... Before Cell test
 		for(int numberOfNodes=4;numberOfNodes<10;numberOfNodes++){
 			for(int numberOfTests=0;numberOfTests<10;numberOfTests++){
 				trials++;
