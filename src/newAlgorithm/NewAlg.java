@@ -19,7 +19,7 @@ public class NewAlg {
 	private List<List<String>> attractors=new ArrayList<List<String>>();
 	private List<String> stableStates=new ArrayList<String>();
 	public NewAlg(String filename) {
-			
+		
 		if(parseData(filename)){
 			attractors=findAttractor();
 			attractors.sort(new AttractorComparator());
@@ -238,7 +238,10 @@ public class NewAlg {
 				for(int j=1;j<graph.get(i).size();j++){
 					if(!in.contains(graph.get(i).get(j))){
 						in.add(graph.get(i).get(j));
-						in.addAll(checkStates(graph, graph.get(i).get(j), in));
+						
+						//in.addAll(
+								checkStates(graph, graph.get(i).get(j), in);
+								//);
 					}
 				}
 			}

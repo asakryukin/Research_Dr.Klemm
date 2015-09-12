@@ -15,8 +15,39 @@ public class main {
 	private static int trials=0,successfulTrials=0;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		int numberOfNodes=16;
+		while(true){
+			try{
+				CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(numberOfNodes, 254, "cell.txt");
+				CCAD.generateFile();
+				NewAlg nA=new NewAlg("cell.txt");
+				
+				attractorNew=nA.getAttractors();
+				for(int i=0; i<attractorNew.size();i++){
+					System.out.println("Attractor#"+(i+1)+":");
+					for(int j=0;j<attractorNew.get(i).size();j++){
+						System.out.print(attractorNew.get(i).get(j)+"\t");
+						
+					}
+					System.out.println();
+					System.out.println("Number of states:"+attractorNew.get(i).size());
+				}
+				/*
+				if(attractors.equals(attractorNew)&&attractors.equals(attractorsSink)){
+					successfulTrials++;
+					System.out.println("EQUAL!");
+				}*/
 		
-		int numberOfNodes=9;
+				numberOfNodes++;
+			
+			}catch(StackOverflowError e){
+				System.out.println();
+				System.out.println(""+numberOfNodes);
+				break;
+			}
+			
+		}
+		 numberOfNodes=9;
 		{
 				trials++;
 				//CreateTestingSet CT=new CreateTestingSet("dataset.txt", numberOfNodes, 2);
@@ -93,37 +124,7 @@ public class main {
 				}
 				numberOfNodes++;
 			}
-			numberOfNodes=9;
-			while(true){
-				try{
-					CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(numberOfNodes, 254, "cell.txt");
-					CCAD.generateFile();
-					NewAlg nA=new NewAlg("cell.txt");
-					
-					attractorNew=nA.getAttractors();
-					for(int i=0; i<attractorNew.size();i++){
-						System.out.println("Attractor#"+(i+1)+":");
-						for(int j=0;j<attractorNew.get(i).size();j++){
-							System.out.print(attractorNew.get(i).get(j)+"\t");
-							
-						}
-						System.out.println();
-						System.out.println("Number of states:"+attractorNew.get(i).size());
-					}
-					/*
-					if(attractors.equals(attractorNew)&&attractors.equals(attractorsSink)){
-						successfulTrials++;
-						System.out.println("EQUAL!");
-					}*/
 			
-					numberOfNodes++;
-				}catch(StackOverflowError e){
-					System.out.println();
-					System.out.println(""+numberOfNodes);
-					break;
-				}
-				
-			}
 		}
 		//System.out.println("Number of tests:"+trials);
 		//System.out.println("Successful:"+successfulTrials);
