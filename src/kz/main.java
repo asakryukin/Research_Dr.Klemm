@@ -38,6 +38,7 @@ public class main {
 					System.out.println("EQUAL!");
 				}*/
 		
+<<<<<<< HEAD
 				numberOfNodes++;
 			
 			}catch(StackOverflowError e){
@@ -56,6 +57,13 @@ public class main {
 				try{
 				CreateCellularAutomataDataset CCAD=new CreateCellularAutomataDataset(numberOfNodes, 254, "cell.txt");
 				CCAD.generateFile();
+=======
+		for(int numberOfNodes=4;numberOfNodes<10;numberOfNodes++){
+			for(int numberOfTests=0;numberOfTests<10;numberOfTests++){
+				trials++;
+				CreateTestingSet CT=new CreateTestingSet("dataset.txt", numberOfNodes, 3);
+				CT.generateFile();
+>>>>>>> parent of e057177... Before Cell test
 				List<String> nei=new ArrayList<String>();
 				
 				
@@ -98,6 +106,7 @@ public class main {
 				
 				//Finding attractors
 				System.out.println();
+<<<<<<< HEAD
 				numberOfNodes++;
 				}catch(StackOverflowError e){
 					System.out.println();
@@ -121,6 +130,14 @@ public class main {
 					System.out.println();
 					System.out.println(""+numberOfNodes);
 					break;
+=======
+				
+				attractorsSink=sT.getAttractors();
+				attractorNew=nA.getAttractors();
+				if(attractors.equals(attractorNew)&&attractors.equals(attractorsSink)){
+					successfulTrials++;
+					System.out.println("EQUAL!");
+>>>>>>> parent of e057177... Before Cell test
 				}
 				numberOfNodes++;
 			}
